@@ -1,15 +1,18 @@
-import { Text, View } from "react-native";
+import React from 'react';
+import { ActivityIndicator, View } from 'react-native';
+import { theme } from '../src/theme';
 
 export default function Index() {
   return (
     <View
       style={{
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF',
       }}
     >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+      <ActivityIndicator size="large" color={theme.colors.primary.base} />
     </View>
   );
 }
