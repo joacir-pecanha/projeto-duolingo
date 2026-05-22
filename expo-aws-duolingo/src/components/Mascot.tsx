@@ -45,19 +45,11 @@ const Eye = styled.View`
   align-items: center;
 `;
 
-interface PupilProps {
-  expression: string;
-}
-
-const Pupil = styled.View<PupilProps>`
+const Pupil = styled.View`
   width: 8px;
   height: 8px;
   background-color: ${theme.colors.text.primary};
   border-radius: 4px;
-  transform: ${({ expression }: PupilProps) => {
-    if (expression === 'studious') return 'translateY(1px)';
-    return 'none';
-  }};
 `;
 
 const Beak = styled.View`
@@ -131,15 +123,19 @@ const SpeechBubbleArrowInner = styled.View`
 `;
 
 export const Mascot: React.FC<MascotProps> = ({ message, expression = 'happy' }) => {
+  const pupilTransform = expression === 'studious'
+    ? [{ translateY: 1 }]
+    : [];
+
   return (
     <Container>
       <MascotBody>
         <EyeRow>
           <Eye>
-            <Pupil expression={expression} />
+            <Pupil style={{ transform: pupilTransform }} />
           </Eye>
           <Eye>
-            <Pupil expression={expression} />
+            <Pupil style={{ transform: pupilTransform }} />
           </Eye>
         </EyeRow>
         <Beak />
