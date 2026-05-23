@@ -51,6 +51,27 @@ const Divider = styled.View`
   height: 20px;
 `;
 
+const DevHint = styled.View`
+  background-color: ${theme.colors.secondary.light};
+  border-width: 2px;
+  border-color: ${theme.colors.secondary.base};
+  border-radius: ${theme.borderRadius.md}px;
+  padding: ${theme.spacing.sm}px;
+  gap: 8px;
+  margin-top: 4px;
+`;
+
+const DevCredential = styled.Pressable`
+  background-color: #ffffff;
+  border-width: 1px;
+  border-color: ${theme.colors.border};
+  border-radius: ${theme.borderRadius.sm}px;
+  padding: 8px 12px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
 export default function Login() {
   const router = useRouter();
   const { login, isLoggingIn, loginError } = useAuth();
@@ -168,6 +189,31 @@ export default function Login() {
             >
               Criar Conta
             </Button>
+
+            <Divider />
+
+            {/* Dev credentials hint */}
+            <DevHint>
+              <Text size="xs" weight="800" color={theme.colors.secondary.shadow} align="center">
+                🔧 Credenciais de Teste
+              </Text>
+              <DevCredential onPress={() => { setEmail('admin@duolingo.com'); setPassword('admin123'); }}>
+                <Text size="xs" weight="bold" color={theme.colors.secondary.base}>
+                  admin@duolingo.com
+                </Text>
+                <Text size="xs" variant="secondary">
+                  senha: admin123
+                </Text>
+              </DevCredential>
+              <DevCredential onPress={() => { setEmail('user@example.com'); setPassword('password123'); }}>
+                <Text size="xs" weight="bold" color={theme.colors.primary.base}>
+                  user@example.com
+                </Text>
+                <Text size="xs" variant="secondary">
+                  senha: password123
+                </Text>
+              </DevCredential>
+            </DevHint>
           </FormContainer>
         </ScrollView>
       </KeyboardAvoidingView>

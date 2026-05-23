@@ -1,6 +1,7 @@
 import { create } from 'zustand';
-import * as SecureStore from 'expo-secure-store';
 import { User, AuthSession } from '../types/auth';
+import { getLevelForXP } from '../types/gamification';
+import { storage } from '../utils/storage';
 
 interface AuthState extends AuthSession {
   isLoading: boolean;
@@ -8,6 +9,7 @@ interface AuthState extends AuthSession {
   clearSession: () => Promise<void>;
   initializeSession: () => Promise<void>;
   updateUser: (user: Partial<User>) => void;
+  addXP: (amount: number) => void;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -18,8 +20,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   setSession: async (user, token) => {
     try {
-      await SecureStore.setItemAsync('auth_token', token);
-      await SecureStore.setItemAsync('auth_user', JSON.stringify(user));
+      await storage.setItemAsync('auth_token', token);
+      await storage.setItemAsync('auth_user', JSON.stringify(user));
       set({ user, token, isAuthenticated: true, isLoading: false });
     } catch (e) {
       console.error('Error saving session:', e);
@@ -28,8 +30,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   clearSession: async () => {
     try {
-      await SecureStore.deleteItemAsync('auth_token');
-      await SecureStore.deleteItemAsync('auth_user');
+      await storage.deleteItemAsync('auth_token');
+      await storage.deleteItemAsync('auth_user');
       set({ user: null, token: null, isAuthenticated: false, isLoading: false });
     } catch (e) {
       console.error('Error clearing session:', e);
@@ -38,8 +40,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   initializeSession: async () => {
     try {
-      const token = await SecureStore.getItemAsync('auth_token');
-      const userStr = await SecureStore.getItemAsync('auth_user');
+      const token = await storage.getItemAsync('auth_token');
+      const userStr = await storage.getItemAsync('auth_user');
       if (token && userStr) {
         set({
           token,
@@ -60,8 +62,21 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const currentUser = get().user;
     if (currentUser) {
       const updatedUser = { ...currentUser, ...updatedFields };
-      SecureStore.setItemAsync('auth_user', JSON.stringify(updatedUser)).catch((err) =>
+      storage.setItemAsync('auth_user', JSON.stringify(updatedUser)).catch((err) =>
         console.error('Failed to update persisted user:', err)
+      );
+      set({ user: updatedUser });
+    }
+  },
+
+  addXP: (amount) => {
+    const currentUser = get().user;
+    if (currentUser) {
+      const newXP = currentUser.xp + amount;
+      const newLevel = getLevelForXP(newXP).level;
+      const updatedUser = { ...currentUser, xp: newXP, level: newLevel };
+      storage.setItemAsync('auth_user', JSON.stringify(updatedUser)).catch((err) =>
+        console.error('Failed to persist XP:', err)
       );
       set({ user: updatedUser });
     }
