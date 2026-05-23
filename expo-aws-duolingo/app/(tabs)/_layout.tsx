@@ -13,23 +13,23 @@ export default function TabsLayout() {
         tabBarStyle: {
           borderTopWidth: 2,
           borderTopColor: theme.colors.border,
-          height: 60,
+          height: 62,
           paddingBottom: 8,
           paddingTop: 8,
           backgroundColor: '#FFFFFF',
         },
         tabBarLabelStyle: {
           fontWeight: 'bold',
-          fontSize: 12,
+          fontSize: 11,
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Trilhas',
+          title: 'Início',
           tabBarIcon: ({ color, size }) => (
-            <Feather name="map" size={size} color={color} />
+            <Feather name="home" size={size} color={color} />
           ),
         }}
       />

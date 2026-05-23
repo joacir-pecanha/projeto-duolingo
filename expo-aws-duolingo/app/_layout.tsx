@@ -27,14 +27,21 @@ function NavigationGuard() {
   useEffect(() => {
     if (isLoading) return;
 
-    const inAuthGroup = segments[0] === '(auth)';
+    const segmentList = segments as string[];
+    const inAuthGroup = segmentList[0] === '(auth)';
+    const onRootIndex = segmentList.length === 0 || segmentList[0] === '';
 
-    if (!isAuthenticated && !inAuthGroup) {
-      // Not logged in -> force login screen
-      router.replace('/(auth)/login');
-    } else if (isAuthenticated && inAuthGroup) {
-      // Logged in -> redirect to main tabs dashboard
-      router.replace('/(tabs)');
+    if (!isAuthenticated) {
+      if (!inAuthGroup) {
+        // Not logged in -> force login screen
+        router.replace('/(auth)/login');
+      }
+    } else {
+      // Logged in
+      if (inAuthGroup || onRootIndex) {
+        // If in login/register screens or on the root loading screen, redirect to the trail
+        router.replace('/trail/expo' as any);
+      }
     }
   }, [isAuthenticated, isLoading, segments, router]);
 
@@ -58,6 +65,9 @@ function NavigationGuard() {
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="course/[id]" options={{ headerShown: false }} />
+      <Stack.Screen name="trail/[courseId]" options={{ headerShown: false }} />
+      <Stack.Screen name="lesson/[lessonId]" options={{ headerShown: false }} />
     </Stack>
   );
 }

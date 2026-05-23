@@ -1,24 +1,28 @@
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
 import { authService } from '../services/auth';
 import { useAuthStore } from '../store/useAuthStore';
 
 export const useAuth = () => {
+  const router = useRouter();
   const setSession = useAuthStore((state) => state.setSession);
   const clearSession = useAuthStore((state) => state.clearSession);
 
   const loginMutation = useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       authService.login(email, password),
-    onSuccess: (data) => {
-      setSession(data.user, data.token);
+    onSuccess: async (data) => {
+      await setSession(data.user, data.token);
+      router.replace('/trail/expo' as any);
     },
   });
 
   const registerMutation = useMutation({
     mutationFn: ({ name, email, password }: { name: string; email: string; password: string }) =>
       authService.register(name, email, password),
-    onSuccess: (data) => {
-      setSession(data.user, data.token);
+    onSuccess: async (data) => {
+      await setSession(data.user, data.token);
+      router.replace('/trail/expo' as any);
     },
   });
 
